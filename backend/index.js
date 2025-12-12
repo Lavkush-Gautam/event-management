@@ -20,6 +20,7 @@ const __dirname = path.dirname(__filename);
 
 app.use(cors({
   origin: "http://localhost:5173",
+  "https://collegeevent-fi2q.onrender.com",
   credentials: true,                 // allow cookies
 }));
 app.use(express.json({ limit: "10mb" }));
@@ -48,4 +49,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, async () => {
   connectDb();
   console.log(`Server running on port ${PORT}`);
+
 });
