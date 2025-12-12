@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true,     // keeps unique index
       lowercase: true,
       trim: true
     },
@@ -39,8 +39,7 @@ const userSchema = new mongoose.Schema(
       public_id: { type: String, default: "" }
     },
 
-    // NEW IMPORTANT FIELDS
-    college: { type: String,  trim: true },
+    college: { type: String, trim: true },
     studentId: { type: String, trim: true },
     course: { type: String, default: "" },
     section: { type: String, default: "" },
@@ -74,7 +73,6 @@ userSchema.set("toJSON", {
   }
 });
 
-// Index for performance
-userSchema.index({ email: 1 });
+
 
 export default mongoose.model("User", userSchema);
