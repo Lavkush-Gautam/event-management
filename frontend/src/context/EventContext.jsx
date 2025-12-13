@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import axiosInstance from "../utils/axiosInstance";
+import axios from "axios";
 
 const EventContext = createContext();
 
@@ -15,7 +15,7 @@ export const EventProvider = ({ children }) => {
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/events");
+      const res = await axios.get("/api/events");
       setEvents(res.data);
 
     } catch (err) {
@@ -32,7 +32,7 @@ export const EventProvider = ({ children }) => {
 
   const getTicket = async (eventId) => {
     try {
-      const res = await axiosInstance.get(`/events/get/${eventId}`);
+      const res = await axios.get(`/api/events/get/${eventId}`);
       setTicket(res.data);
       console.log("Ticket Data:", res.data);
       return res.data;
@@ -47,7 +47,7 @@ export const EventProvider = ({ children }) => {
   const getEventById = async (id) => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get(`/events/${id}`);
+      const res = await axios.get(`/api/events/${id}`);
       setEvent(res.data);
     } catch (err) {
       setError(err.response?.data?.error || "Event not found");
@@ -60,7 +60,7 @@ export const EventProvider = ({ children }) => {
   const createEvent = async (data) => {
     try {
       setLoading(true);
-      const res = await axiosInstance.post("/events/create", data);
+      const res = await axios.post("/api/events/create", data);
       setEvents([res.data.event, ...events]);
       toast.success("Event created successfully!");
       return { success: true };
@@ -76,8 +76,8 @@ export const EventProvider = ({ children }) => {
   try {
     setLoading(true);
 
-    const res = await axiosInstance.put(
-      `/events/update/${eventId}`,
+    const res = await axios.put(
+      `/api/events/update/${eventId}`,
       updatedData,
       {
         headers: {
@@ -109,7 +109,7 @@ export const EventProvider = ({ children }) => {
   const deleteEvent = async (id) => {
     try {
       setLoading(true);
-      await axiosInstance.delete(`/events/${id}`);
+      await axios.delete(`/api/events/${id}`);
       setEvents(events.filter((ev) => ev._id !== id));
       return { success: true };
     } catch (err) {
@@ -122,7 +122,7 @@ export const EventProvider = ({ children }) => {
    const verifyCheckIn = async (id) => {
     try {
       setLoading(true);
-      await axiosInstance.delete(`/events/${id}`);
+      await axios.delete(`/api/events/${id}`);
       setEvents(events.filter((ev) => ev._id !== id));
       return { success: true };
     } catch (err) {
@@ -138,7 +138,7 @@ export const EventProvider = ({ children }) => {
   // Create Razorpay Order
   const createOrder = async (eventId) => {
     try {
-      const res = await axiosInstance.post('/payment/create-order', { eventId });
+      const res = await axios.post('/api/payment/create-order', { eventId });
 
       return {
         success: true,
@@ -156,7 +156,7 @@ export const EventProvider = ({ children }) => {
   // Verify Payment & Register User
   const verifyPayment = async (paymentData) => {
     try {
-      const res = await axiosInstance.post('/payment/verify', paymentData);
+      const res = await axios.post('/api/payment/verify', paymentData);
       return res.data;
     } catch (err) {
       return { success: false, error: err.response?.data?.message };
@@ -167,7 +167,7 @@ export const EventProvider = ({ children }) => {
 
 const fetchStats = async () => {
   try {
-    const res = await axiosInstance.get("/events/stats");
+    const res = await axios.get("/api/events/stats");
 
     setStats(res.data.stats);
   } catch (err) {

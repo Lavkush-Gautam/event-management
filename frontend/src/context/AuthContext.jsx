@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import axiosInstance from "../utils/axiosInstance";
+import axios from 'axios'
 import toast from "react-hot-toast";
 
 const AuthContext = createContext();
@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   // Fetch logged-in user on refresh
   const loadUser = async () => {
     try {
-      const res = await axiosInstance.get("/auth/profile");
+      const res = await axios.get("/api/auth/profile");
       setUser(res.data);
     } catch (err) {
       setUser(null);
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
 
     try {
-      const res = await axiosInstance.post("/auth/login", { email, password });
+      const res = await axios.post("/api/auth/login", { email, password });
       toast.success("Logged in successfully!");
       setUser(res.data.user);
       return res.data;
@@ -51,7 +51,7 @@ const updateProfile = async (formData) => {
     //   body.avatar = await toBase64(formData.avatar);
     // }
 
-    const res = await axiosInstance.put("/auth/update-profile", body);
+    const res = await axios.put("/api/auth/update-profile", body);
 
     setUser(res.data.user);
     toast.success("Profile updated successfully!");
@@ -67,7 +67,7 @@ const updateProfile = async (formData) => {
   const register = async (data) => {
     
     try {
-      const res = await axiosInstance.post("/auth/signup", data);
+      const res = await axios.post("/api/auth/signup", data);
       toast.success("Registered successfully!");
       setUser(res.data.user);
       return res.data;
@@ -83,7 +83,7 @@ const updateProfile = async (formData) => {
   const logout = async () => {
     
     try {
-      await axiosInstance.post("/auth/logout");
+      await axios.post("/api/auth/logout");
        setUser(null);
       toast.success("Logged out successfully!");
       
@@ -97,7 +97,7 @@ const updateProfile = async (formData) => {
 
   const fetchAllUsers = async () => {
   try {
-    const res = await axiosInstance.get("/auth/all-users");
+    const res = await axios.get("/api/auth/all-users");
 
     console.log("Loaded Users (Context):", res.data.users);
 
@@ -112,7 +112,7 @@ const updateProfile = async (formData) => {
   // FREE EVENT REGISTRATION
   const registerForEvent = async (eventId) => {
     try {
-      const res = await axiosInstance.post(`/registration/${eventId}`);
+      const res = await axios.post(`/api/registration/${eventId}`);
       toast.success("Registered successfully!");
       return res.data;
     } catch (error) {
@@ -123,7 +123,7 @@ const updateProfile = async (formData) => {
 
   const getMyRegistrations = async () => {
     try {
-      const res = await axiosInstance.get(`/registration/my`);
+      const res = await axios.get(`/api/registration/my`);
       toast.success("Registered successfully!");
       return res.data;
     } catch (error) {
@@ -134,7 +134,7 @@ const updateProfile = async (formData) => {
 
    const cancelRegistration = async (eventId) => {
     try {
-      const res = await axiosInstance.delete(`/registration/${eventId}`);
+      const res = await axios.delete(`/api/registration/${eventId}`);
       toast.success("Deleted successfully!");
       return res.data;
     } catch (error) {
@@ -147,7 +147,7 @@ const updateProfile = async (formData) => {
   // CREATE ORDER FOR PAID EVENT
   const createOrder = async (eventId) => {
     try {
-      const res = await axiosInstance.post(`/payment/create-order`, { eventId });
+      const res = await axios.post(`/api/payment/create-order`, { eventId });
       return res.data;
     } catch (error) {
       toast.error("Failed to create order");
@@ -158,7 +158,7 @@ const updateProfile = async (formData) => {
   // VERIFY PAYMENT AFTER SUCCESS
   const verifyPayment = async (paymentData) => {
     try {
-      const res = await axiosInstance.post(`/payment/verify`, paymentData);
+      const res = await axios.post(`/api/payment/verify`, paymentData);
       toast.success("Payment verified!");
       return res.data;
     } catch (error) {
@@ -173,7 +173,7 @@ const [payments, setPayments] = useState([]);
 
 const fetchPayments = async () => {
   try {
-    const res = await axiosInstance.get("/payment/all");
+    const res = await axios.get("/api/payment/all");
     setPayments(res.data.payments);
     return res.data.payments;
   } catch (err) {

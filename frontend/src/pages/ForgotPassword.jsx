@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import axiosInstance from "../utils/axiosInstance";
+import axios from 'axios'
 import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
@@ -14,7 +14,7 @@ const ForgotPassword = () => {
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.post("/auth/request-reset-otp", { email });
+      await axios.post("/api/auth/request-reset-otp", { email });
       toast.success("OTP sent to your email!");
       setStep(2);
     } catch (err) {
@@ -47,7 +47,7 @@ const handleOtpBackspace = (e, index) => {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.post("/auth/verify-reset-otp", { email, otp });
+      await axios.post("/api/auth/verify-reset-otp", { email, otp });
       toast.success("OTP verified!");
       setStep(3);
     } catch (err) {
@@ -59,7 +59,7 @@ const handleOtpBackspace = (e, index) => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.post("/auth/reset-password", { email, newPassword });
+      await axios.post("/api/auth/reset-password", { email, newPassword });
       toast.success("Password reset successfully!");
       window.location.href = "/"; // redirect
     } catch (err) {

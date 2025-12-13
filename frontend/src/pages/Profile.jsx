@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext"; // your auth context
-import axiosInstance from "../utils/axiosInstance";
+
 
 const Profile = () => {
   const { user, setUser ,updateProfile} = useAuth();

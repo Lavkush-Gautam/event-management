@@ -1,12 +1,11 @@
 import { useEffect, useRef, useMemo } from "react";
 import {
   Briefcase,
-  Music,
   CupSoda,
   Dumbbell,
   Presentation,
   PartyPopper,
-  Wrench
+  Wrench,
 } from "lucide-react";
 import gsap from "gsap";
 import CategoryCard from "./CategoryCard";
@@ -14,13 +13,8 @@ import { useEvents } from "../context/EventContext";
 
 const Categories = () => {
   const containerRef = useRef(null);
-  const { events, fetchEvents, loading } = useEvents();
+  const { events, loading } = useEvents();
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  // CATEGORY ICON MAP
   const categoryIcons = {
     technical: Briefcase,
     cultural: PartyPopper,
@@ -30,15 +24,21 @@ const Categories = () => {
     other: CupSoda,
   };
 
-  // Compute categories dynamically
   const categories = useMemo(() => {
     const result = {};
+    const safeEvents = Array.isArray(events) ? events : [];
 
-    events.forEach((event) => {
+    safeEvents.forEach((event) => {
       const cat = event.category?.toLowerCase() || "other";
+
       if (!result[cat]) {
-        result[cat] = { title: cat, count: 0, icon: categoryIcons[cat] || CupSoda };
+        result[cat] = {
+          title: cat,
+          count: 0,
+          icon: categoryIcons[cat] || CupSoda,
+        };
       }
+
       result[cat].count += 1;
     });
 
@@ -71,9 +71,12 @@ const Categories = () => {
       gsap.set(card, { opacity: 0, y: 30 });
       observer.observe(card);
     });
+
+    return () => observer.disconnect();
   }, [categories]);
 
-  if (loading) return <p className="text-center text-lg mt-10">Loading categories...</p>;
+  if (loading)
+    return <p className="text-center text-lg mt-10">Loading categories...</p>;
 
   return (
     <div className="mt-20 w-full max-w-6xl mx-auto text-black p-6">
