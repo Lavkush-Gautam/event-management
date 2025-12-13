@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "../utils/axiosInstance";
+import axios from "axios";
 import { Pie, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -28,7 +28,7 @@ const MyRegistrations = () => {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showTicket, setShowTicket] = useState(false);
-  const {ticketData, getTicket} = useEvents();
+  const { ticketData, getTicket } = useEvents();
 
   useEffect(() => {
     loadRegistrations();
@@ -36,14 +36,14 @@ const MyRegistrations = () => {
 
 
   const openTicket = async (eventId) => {
-  await getTicket(eventId);
-  setShowTicket(true);
-};
+    await getTicket(eventId);
+    setShowTicket(true);
+  };
 
 
   const loadRegistrations = async () => {
     try {
-      const res = await axios.get("/registration/my");
+      const res = await axios.get("/api/registration/my");
       setRegistrations(res.data.registrations);
     } catch (err) {
       console.error("Error loading registrations:", err);
@@ -56,8 +56,10 @@ const MyRegistrations = () => {
     return <p className="p-10 text-xl text-gray-600">Loading your tickets...</p>;
 
   // ---------- STATS ----------
-  const total = registrations.length;
-  const free = registrations.filter(r => r.eventId?.price === 0).length;
+  const safeRegistrations = Array.isArray(registrations) ? registrations : [];
+
+  const total = safeRegistrations.length;
+  const free = safeRegistrations.filter((r) => r.eventId?.price === 0).length;
   const paid = total - free;
 
   // ---------- PIE CHART ----------
@@ -72,10 +74,10 @@ const MyRegistrations = () => {
   };
 
   // ---------- MONTHLY REGISTRATIONS ----------
-  const monthLabels = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const monthlyCounts = Array(12).fill(0);
 
-  registrations.forEach(reg => {
+  safeRegistrations.forEach((reg) => {
     const m = new Date(reg.createdAt).getMonth();
     monthlyCounts[m] += 1;
   });
@@ -94,7 +96,7 @@ const MyRegistrations = () => {
   // ---------- CANCEL REGISTRATION ----------
   const cancelRegistration = async (eventId) => {
     if (!window.confirm("Are you sure you want to cancel?")) return;
-    
+
     try {
       await axios.delete(`/registration/${eventId}`);
       loadRegistrations();
@@ -107,7 +109,7 @@ const MyRegistrations = () => {
     <div className="p-8 mt-20">
 
       {/* Title */}
-      <UpComing 
+      <UpComing
         title="My Registrations"
         subtitle="View and manage your event registrations"
       />
@@ -133,37 +135,37 @@ const MyRegistrations = () => {
       </div>
 
       {/* Compact Charts Row */}
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10 items-center px-10 justify-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10 items-center px-10 justify-center">
 
-  {/* Pie Chart */}
-  <div className="bg-white p-4 border border-gray-200 rounded-md">
-    <h2 className="text-lg font-semibold mb-2">Free vs Paid</h2>
-    <div className="h-62">
-      <Pie data={pieData} />
-    </div>
-  </div>
+        {/* Pie Chart */}
+        <div className="bg-white p-4 border border-gray-200 rounded-md">
+          <h2 className="text-lg font-semibold mb-2">Free vs Paid</h2>
+          <div className="h-62">
+            <Pie data={pieData} />
+          </div>
+        </div>
 
-  {/* Bar Chart */}
-  <div className="bg-white p-4 border border-gray-200 rounded-md">
-    <h2 className="text-lg font-semibold mb-2">Monthly Registrations</h2>
-    <div className="h-62">
-      <Bar data={barData} />
-    </div>
-  </div>
+        {/* Bar Chart */}
+        <div className="bg-white p-4 border border-gray-200 rounded-md">
+          <h2 className="text-lg font-semibold mb-2">Monthly Registrations</h2>
+          <div className="h-62">
+            <Bar data={barData} />
+          </div>
+        </div>
 
-</div>
+      </div>
 
 
-     <UpComing 
+      <UpComing
         title="Registered Events"
         subtitle="Manage your event registrations"
       />
 
-      {registrations.length === 0 ? (
+      {safeRegistrations.length === 0 ? (
         <p className="text-gray-500">You haven't registered for any events yet.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 px-12">
-          {registrations.map((reg) => (
+          {safeRegistrations.map((reg) => (
             <div
               key={reg._id}
               className="bg-white overflow-hidden border border-gray-200"
@@ -191,11 +193,10 @@ const MyRegistrations = () => {
                 </div>
 
                 <span
-                  className={`inline-block px-3 py-1 text-sm font-semibold rounded-full ${
-                    reg.eventId.price === 0
+                  className={`inline-block px-3 py-1 text-sm font-semibold rounded-full ${reg.eventId.price === 0
                       ? "bg-green-100 text-green-700"
                       : "bg-red-100 text-red-700"
-                  }`}
+                    }`}
                 >
                   {reg.eventId.price === 0 ? "Free" : `₹${reg.eventId.price}`}
                 </span>
@@ -209,7 +210,7 @@ const MyRegistrations = () => {
                     <Ticket size={16} className="inline-block mr-2" />
                     View Ticket
                   </button>
-{/* 
+                  {/* 
                   <button
                     onClick={() => cancelRegistration(reg.eventId._id)}
                     className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg"

@@ -68,15 +68,16 @@ const Scanner = () => {
         setResult(response);
         return;
       }
-    } catch {}
-    
+    } catch { }
+
     animationRef.current = requestAnimationFrame(scanLoop);
   };
 
   const stopCamera = () => {
     cancelAnimationFrame(animationRef.current);
     const stream = videoRef.current?.srcObject;
-    stream?.getTracks()?.forEach((t) => t.stop());
+    const tracks = stream && typeof stream.getTracks === "function" ? stream.getTracks() : [];
+    if (tracks && tracks.forEach) tracks.forEach((t) => t.stop());
   };
 
   return (
