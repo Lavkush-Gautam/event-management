@@ -6,7 +6,7 @@ dotenv.config();
 export const sendRegistrationEmail = async (email, name, event, qrCode) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
+    port: 587,
     secure: true,
     auth: {
       user: process.env.EMAIL_USER,
@@ -43,4 +43,5 @@ export const sendRegistrationEmail = async (email, name, event, qrCode) => {
     ],
   });
 };
+
 
