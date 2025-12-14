@@ -39,11 +39,7 @@ const projectRoot = path.resolve(__dirname, "..");
 app.use(express.static(path.join(projectRoot, "frontend", "dist")));
 
 // React / Vite fallback
-app.get("*", (req, res) => {
-  res.sendFile(
-    path.resolve(projectRoot, "frontend", "dist", "index.html")
-  );
-});
+app.get(/.*/, (req, res) => { res.sendFile(path.resolve(projectRoot, 'frontend', 'dist', 'index.html')); });
 
 /* ---------- Server Start ---------- */
 const PORT = process.env.PORT || 5000;
@@ -52,3 +48,4 @@ app.listen(PORT, async () => {
   await connectDb();
   console.log(`✅ Server running on port ${PORT}`);
 });
+
