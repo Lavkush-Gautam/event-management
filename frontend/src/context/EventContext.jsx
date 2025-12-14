@@ -181,7 +181,7 @@ const [registrations, setRegistrations] = useState([]);
 
 const fetchRegistrations = async () => {
   try {
-    const res = await axiosInstance.get("/events/all");
+    const res = await axios.get("/api/events/all");
     setRegistrations(res.data.registrations); 
     return res.data.registrations;
   } catch (err) {
@@ -224,3 +224,4 @@ const fetchRegistrations = async () => {
 };
 
 export const useEvents = () => useContext(EventContext);
+
